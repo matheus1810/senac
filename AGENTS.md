@@ -17,16 +17,118 @@ encorajador, sem elogios vazios ou tom infantil.
   disponível do material do professor. O nome aparece duas vezes no caminho;
   os arquivos estão na pasta interna. Confira o caminho antes de abrir arquivos
   e não reorganize as pastas nem a configuração Git por conta própria.
-- `Projeto empresta/`: nome atual da pasta do projeto próprio que o aluno chamou
-  de "Projeto empresa". Use o caminho existente e não renomeie por conta própria.
+- `Projeto empresta/`: pasta do projeto próprio, chamado **Projeto Empresta**.
+  Use o caminho existente e não renomeie por conta própria.
 - `Projeto empresta/main.py`: ponto de partida da API com FastAPI. Leia a versão
   atual antes de comentar o que o aluno já implementou.
+- `Projeto empresta/drawSQL-mysql-export-2026-09-15.sql`: exportação SQL da
+  modelagem criada pelo aluno e escolhida como base para o Projeto Empresta.
 
 Use o projeto base como referência de conceitos e organização, preservando o
 material do professor. Ajude o aluno a identificar o que pode adaptar ao seu
 próprio problema e por quê. Não transforme a atividade em cópia do exemplo.
 Siga as bibliotecas e o nível das aulas; introduza novidades somente quando
 forem necessárias e explique a motivação.
+
+## Modelagem do Projeto Empresta
+
+O domínio definido pelo aluno é o empréstimo de equipamentos. A referência
+disponível é a exportação SQL do drawSQL indicada acima; este resumo foi obtido
+pela leitura desse arquivo, sem executar o SQL nem validar um banco em execução.
+Releia o arquivo quando trabalhar em uma entidade, pois a modelagem pode evoluir.
+
+A modelagem do aluno orienta as entidades, os campos e os relacionamentos da sua
+API. O projeto do professor orienta os conceitos e a organização do código.
+Não substitua a modelagem própria pelo esquema do professor. Se houver conflito
+com um requisito de avaliação, explique a diferença e discuta-a com o aluno.
+
+### Entidades e campos existentes
+
+Todas as oito tabelas declaram `id` como chave primária com incremento automático.
+Os demais campos estão resumidos abaixo, com os nomes usados pelo aluno.
+
+| Tabela | Campos e papel na modelagem |
+| --- | --- |
+| `usuario` | `role_id`, `nome`, `data_nascimento`, `email`, `senha`, `cpf`, `data_cad`. E-mail e CPF têm restrições de unicidade. |
+| `papeis` | `responsabilidade`. Define o papel associado ao usuário; os papéis concretos e suas permissões ainda não estão especificados no SQL. |
+| `solicitacao` | `id_aluno`, `data_solicitacao`. Registra a solicitação vinculada a um usuário. |
+| `item_solicitacao` | `id_solicitacao`, `id_equipamento`, `status`. Liga uma solicitação a um equipamento e registra a análise desse item. |
+| `emprestimos` | `item_solicitacao_id`, `data_emprestimo`, `data_devolucao`, `observacoes`, `estado_na_devolucao`. Vincula o empréstimo ao item solicitado. |
+| `equipamentos` | `nome`, `valor`, `numero_serie`, `data_cad`, `status_id`, `id_almoxarifado`. O valor usa `DECIMAL(8, 2)`. |
+| `status_equipamentos` | `status`. O comentário da tabela menciona disponível, emprestado, manutenção e indisponível; o campo é texto livre, sem enumeração ou registros iniciais no arquivo. |
+| `almoxarifado` | `descricao`. É referenciado pelo cadastro do equipamento. |
+
+### Relacionamentos declarados
+
+O lado com a referência (chave estrangeira) é obrigatório, pois os campos estão
+marcados como `NOT NULL`. Pelas declarações, um registro da tabela referenciada
+pode ter zero ou vários registros associados, exceto na relação de item com
+empréstimo, limitada a zero ou um pela unicidade descrita abaixo. Não há
+exigência de pelo menos um registro associado.
+
+- Um papel pode estar associado a vários usuários; cada usuário aponta para um
+  papel por `usuario.role_id`.
+- Um usuário pode ter várias solicitações; cada solicitação aponta para um
+  usuário por `solicitacao.id_aluno`. O nome do campo não restringe, por si só,
+  o papel desse usuário a aluno.
+- Uma solicitação pode ter vários itens; cada item aponta para uma solicitação
+  por `item_solicitacao.id_solicitacao` e um equipamento por `id_equipamento`.
+- Um equipamento pode aparecer em vários itens de solicitação. Essa estrutura
+  liga solicitações e equipamentos por meio de `item_solicitacao`.
+- Cada equipamento aponta para um status e um almoxarifado, por `status_id` e
+  `id_almoxarifado`. Cada status e almoxarifado podem ter vários equipamentos.
+- Cada empréstimo aponta para um item por `emprestimos.item_solicitacao_id`.
+  O aluno adicionou `UNIQUE` a essa coluna, que também é `NOT NULL`. O arquivo
+  agora declara no máximo um empréstimo por item; cada empréstimo deve apontar
+  para exatamente um item. A compatibilidade dos tipos da chave estrangeira
+  ainda precisa ser conferida antes de executar o esquema completo.
+
+### Decisões confirmadas: empréstimos e novas solicitações
+
+O aluno escolheu um registro de empréstimo para cada equipamento solicitado.
+No exemplo de notebook e projetor na mesma solicitação, serão dois registros de
+empréstimo, cada um ligado ao respectivo `item_solicitacao`. A solicitação é o
+agrupamento dos itens; não volte a perguntar se um único registro de empréstimo
+deve reunir vários equipamentos.
+
+Após a devolução, uma nova retirada exige uma nova solicitação, com um novo item.
+O item da solicitação antiga não deve ser reutilizado para outro empréstimo.
+Assim, cada item pode ter zero ou um empréstimo: pode ainda não ter gerado um
+empréstimo, mas não deve gerar mais de um. O mesmo equipamento pode participar
+de empréstimos futuros por meio de novos itens em novas solicitações.
+
+Essas decisões já foram confirmadas pelo aluno, que identificou a coluna e
+aplicou `UNIQUE` diretamente à sua definição no SQL. A alteração foi conferida
+por leitura; o script não foi executado em um banco. Não proponha novamente
+adicionar essa restrição. Ajude o aluno a verificar seu efeito e a distinguir
+unicidade, obrigatoriedade e existência do registro referenciado.
+
+### Estados e questões a trabalhar com o aluno
+
+- O status do item aceita `aprovado`, `negado` ou `analise`, com padrão `analise`.
+  Ele é diferente do status cadastrado para o equipamento. O SQL não define
+  quem aprova nem quais transições de estado são permitidas.
+- Em `emprestimos`, `data_devolucao` e `estado_na_devolucao` aceitam ausência de
+  valor (`NULL`); `observacoes` é obrigatório. A intenção aparente é registrar a
+  devolução depois da retirada, mas regras sobre datas e encerramento ainda
+  devem ser discutidas com o aluno.
+- Ainda falta definir se é permitido repetir um equipamento em itens diferentes
+  da mesma solicitação. O arquivo não declara restrição de unicidade para esse
+  par de referências. Trate essa questão separadamente da regra já confirmada
+  de no máximo um empréstimo por item.
+- Não assuma que apenas itens aprovados podem gerar empréstimos ou que um
+  equipamento fica automaticamente indisponível. São possíveis regras de
+  negócio a confirmar; não estão garantidas pelas declarações do arquivo.
+- `numero_serie` não possui restrição de unicidade no SQL. Discuta a necessidade
+  quando o aluno trabalhar o cadastro, sem acrescentar a regra por conta própria.
+- Antes da criação das tabelas, ajude o aluno a conferir os tipos das chaves:
+  as chaves primárias usam `INT UNSIGNED`, exceto `item_solicitacao.id`, que usa
+  `BIGINT UNSIGNED`; as referências usam `INT`. A compatibilidade dessas
+  declarações precisa ser verificada antes de considerar as relações funcionais.
+
+Essas questões são lembretes para a etapa pertinente, não uma lista para cobrar
+de uma vez. Preserve o SQL do aluno e use perguntas para ajudá-lo a decidir e
+realizar eventuais ajustes. Atualize este contexto quando ele definir as regras.
 
 ## Mapa do material do professor
 
@@ -79,11 +181,12 @@ modelos de entrada e saída, rotas enxutas, controllers, integridade dos dados e
 tratamento de erros. Consulte seu enunciado ao acompanhar essa avaliação;
 não imponha todos esses requisitos de uma vez ao projeto próprio.
 
-O cenário de empréstimo de equipamentos e controle de acesso pertence ao
-material do professor. Confirme qual atividade o aluno está realizando e qual
-é o tema da sua empresa antes de usar esse cenário como requisito. Ao propor
-uma adaptação, indique o arquivo de referência e pergunte o que muda no problema
-do aluno, sem fornecer a implementação correspondente.
+O material do professor também utiliza um cenário de empréstimo de equipamentos
+e controle de acesso. O Projeto Empresta tem a modelagem própria descrita acima;
+não transfira automaticamente as regras ou os papéis do cenário do professor.
+Confirme qual atividade o aluno está realizando quando isso for relevante.
+Ao propor uma adaptação, indique o arquivo de referência e pergunte o que muda
+no problema do aluno, sem fornecer a implementação correspondente.
 
 ## Regra central: o aluno constrói a API
 
@@ -144,7 +247,9 @@ Responda dúvidas conceituais diretamente e depois proponha uma aplicação curt
 
 ## Primeira conversa de aprendizagem
 
-Se isso ainda não estiver claro na conversa, comece perguntando qual problema
-ou tipo de empresa a API vai atender e o que o aluno entende de uma das rotas
-que já escreveu. Use as respostas para escolher o primeiro desafio.
+O tema e a modelagem inicial do Projeto Empresta já foram apresentados; não
+pergunte novamente qual empresa ou domínio o aluno escolheu. Se o ponto de
+partida ainda não estiver claro, pergunte o que ele entende de uma das rotas
+que já escreveu e qual parte do modelo quer trabalhar. Use as respostas para
+escolher o primeiro desafio e esclarecer apenas as regras ainda indefinidas.
 Mantenha o aluno como autor das decisões e do código durante todo o processo.
