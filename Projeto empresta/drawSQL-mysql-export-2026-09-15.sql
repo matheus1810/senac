@@ -1,6 +1,6 @@
 CREATE TABLE `usuario`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `role_id` INT NOT NULL,
+    `role_id` INT UNSIGNED NOT NULL,
     `nome` VARCHAR(255) NOT NULL,
     `data_nascimento` DATE NOT NULL,
     `email` VARCHAR(255) NOT NULL,
@@ -16,7 +16,7 @@ ALTER TABLE
     `usuario` ADD UNIQUE `usuario_cpf_unique`(`cpf`);
 CREATE TABLE `emprestimos`(
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `item_solicitacao_id` INT NOT NULL UNIQUE,
+    `item_solicitacao_id` INT UNSIGNED NOT NULL UNIQUE,
     `data_emprestimo` DATETIME NOT NULL,
     `data_devolucao` DATETIME NULL,
     `observacoes` VARCHAR(255) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE `status_equipamentos`(
     `status` VARCHAR(255) NOT NULL
 ) COMMENT 'Disponível, emprestado, manutanção, indisponível';
 CREATE TABLE `item_solicitacao`(
-    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `id_solicitacao` INT NOT NULL,
     `id_equipamento` INT NOT NULL,
     `status` ENUM('aprovado', 'negado', 'analise') NOT NULL DEFAULT 'analise'

@@ -11,6 +11,33 @@ Responda em português brasileiro, com linguagem simples, respeito e paciência.
 Explique termos técnicos quando aparecerem pela primeira vez. Seja direto e
 encorajador, sem elogios vazios ou tom infantil.
 
+## Continuidade do estudo e histórico do chat
+
+- Leia [HISTORICO_CHAT.md](HISTORICO_CHAT.md) ao iniciar ou retomar o estudo,
+  começando pelo resumo de retomada e pelas últimas interações registradas.
+- Use esse arquivo para recuperar as decisões, o conhecimento demonstrado pelo
+  aluno e o desafio pendente. Confira os arquivos atuais antes de avaliar código;
+  mensagens antigas descrevem versões anteriores e não substituem essa leitura.
+- A IA que conduz a conversa é responsável por editar e salvar o histórico.
+  Faça isso durante cada interação relevante de estudo, antes de enviar a
+  resposta final ao aluno, sem esperar que ele peça novamente ou faça um push.
+  Acrescente a mensagem do aluno e a resposta final da IA ao registro,
+  preservando a ordem e identificando o autor. Registre também decisões, dúvidas
+  e ajustes conferidos. Não copie o contexto automático da IDE nem saídas de
+  ferramentas para o diálogo. A gravação ocorre pelas edições da IA no arquivo;
+  esta instrução não instala um gravador ou serviço em segundo plano.
+- Preserve as falas anteriores. Se precisar resumir algum trecho, identifique-o
+  como resumo; não apresente uma reconstrução como transcrição literal.
+- Atualize o resumo de retomada, a data e a última pergunta pendente quando houver
+  avanço. Distinga uma alteração sugerida de uma alteração realizada e conferida.
+- A manutenção deste documento de estudo está autorizada pelo aluno e não altera
+  o acordo de que ele escreve o código. Atualize o histórico sem resolver os
+  exercícios por ele nem preencher respostas que ele ainda não deu.
+- O histórico acompanha o repositório quando incluído em um commit e enviado
+  por push. Oriente a retomada pela leitura dos arquivos; não presuma que outra
+  conversa ou outro dispositivo já tenha acesso ao conteúdo deste chat.
+  No fluxo combinado, o aluno faz commit e push quando quiser sincronizar.
+
 ## Contexto deste repositório
 
 - `ProgramadorWebSenac_Backend/ProgramadorWebSenac_Backend/`: raiz atual da cópia
@@ -67,7 +94,8 @@ empréstimo, limitada a zero ou um pela unicidade descrita abaixo. Não há
 exigência de pelo menos um registro associado.
 
 - Um papel pode estar associado a vários usuários; cada usuário aponta para um
-  papel por `usuario.role_id`.
+  papel por `usuario.role_id`. O aluno já alinhou `usuario.role_id` e `papeis.id`
+  para `INT UNSIGNED`, conforme conferido por leitura do SQL.
 - Um usuário pode ter várias solicitações; cada solicitação aponta para um
   usuário por `solicitacao.id_aluno`. O nome do campo não restringe, por si só,
   o papel desse usuário a aluno.
@@ -80,8 +108,9 @@ exigência de pelo menos um registro associado.
 - Cada empréstimo aponta para um item por `emprestimos.item_solicitacao_id`.
   O aluno adicionou `UNIQUE` a essa coluna, que também é `NOT NULL`. O arquivo
   agora declara no máximo um empréstimo por item; cada empréstimo deve apontar
-  para exatamente um item. A compatibilidade dos tipos da chave estrangeira
-  ainda precisa ser conferida antes de executar o esquema completo.
+  para exatamente um item. O aluno também alinhou os dois campos dessa relação
+  para `INT UNSIGNED`. A correspondência dos tipos foi conferida por leitura;
+  o esquema completo ainda não foi executado em um banco.
 
 ### Decisões confirmadas: empréstimos e novas solicitações
 
@@ -122,9 +151,15 @@ unicidade, obrigatoriedade e existência do registro referenciado.
 - `numero_serie` não possui restrição de unicidade no SQL. Discuta a necessidade
   quando o aluno trabalhar o cadastro, sem acrescentar a regra por conta própria.
 - Antes da criação das tabelas, ajude o aluno a conferir os tipos das chaves:
-  as chaves primárias usam `INT UNSIGNED`, exceto `item_solicitacao.id`, que usa
-  `BIGINT UNSIGNED`; as referências usam `INT`. A compatibilidade dessas
-  declarações precisa ser verificada antes de considerar as relações funcionais.
+  todas as chaves primárias agora usam `INT UNSIGNED`. O aluno alterou
+  `item_solicitacao.id` de `BIGINT UNSIGNED` para `INT UNSIGNED` e adicionou
+  `UNSIGNED` a `emprestimos.item_solicitacao_id`, preservando `NOT NULL UNIQUE`.
+  Esse par já está alinhado em tamanho e sinal, assim como `usuario.role_id`
+  e `papeis.id`. As outras cinco chaves estrangeiras ainda usam `INT`, sem
+  `UNSIGNED`, enquanto os identificadores referenciados usam `INT UNSIGNED`.
+  Oriente o aluno a localizar os demais pares pelas declarações `FOREIGN KEY`
+  e `REFERENCES` e aplicar o mesmo raciocínio, sem alterar o SQL por ele nem
+  afirmar que o script já foi executado.
 
 Essas questões são lembretes para a etapa pertinente, não uma lista para cobrar
 de uma vez. Preserve o SQL do aluno e use perguntas para ajudá-lo a decidir e
