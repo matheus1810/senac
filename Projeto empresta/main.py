@@ -1,10 +1,22 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,status, HTTPException
+from pydantic import BaseModel
 
 app = FastAPI(
     title="Minha API",
     description="API de exemplo com FastAPI",
     version="1.0.0"
 )
+
+equipamentos = [
+       {
+         "id" : 1,
+         "nome" : 'Câmera'
+       },
+        {
+         "id" : 2,
+         "nome" : 'Notebook'
+       }, 
+    ]
 
 
 @app.get("/")
@@ -26,22 +38,52 @@ def apresentacao():
 
 @app.get("/equipamento/{id_equipamento}")
 def retorna_equipamento(id_equipamento : int):
-    equipamento = [
-       {
-         "id" : 1,
-         "nome" : 'Câmera'
-       },
-        {
-         "id" : 2,
-         "nome" : 'Câmera'
-       },
-    ]
-    for item in equipamento:
-        if item["id"] == id_equipamento:
-            return item
-        else:
-            return "nada"
+   
+    for item in equipamentos:
+            if item["id"] == id_equipamento:
+                return item
+        
+    raise HTTPException(
+        status.HTTP_404_NOT_FOUND,
+        detail = f'Equipamento {id_equipamento} não foi encontrado'
+    )
 
-    return{
-        "Equipamento" : item
+
+
+@app.get('/equipamentos')
+def get_equipamentos():
+    return equipamentos
+    
+
+
+
+class EquipamentoEntrada(BaseModel):
+    nome: str
+    
+
+
+@app.post("/equipamentos",status_code=status.HTTP_201_CREATED)
+def cadastraEquipamento(equipamento : EquipamentoEntrada):
+    
+    novo_id = len(equipamentos) + 1
+    
+    novo_equipamento = {
+        "id": novo_id,
+        "nome":equipamento.nome
     }
+    
+    equipamentos.append(novo_equipamento)
+    return novo_equipamento
+
+@app.put("/equipamento/{id_equipamento}")
+def atualizarEquipamento(id_equipamento:int, dados:EquipamentoEntrada):
+     
+        for item in equipamentos:
+                    if item["id"] == id_equipamento:
+                        item["nome"] = dados.nome
+                        return item
+            
+        # raise HTTPException(
+        #     status.HTTP_404_NOT_FOUND,
+        #     detail = f'Equipamento {id_equipamento} não foi encontrado'
+        # )

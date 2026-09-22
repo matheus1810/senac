@@ -13,17 +13,20 @@ encorajador, sem elogios vazios ou tom infantil.
 
 ## Continuidade do estudo e histórico do chat
 
-- Leia [HISTORICO_CHAT.md](HISTORICO_CHAT.md) ao iniciar ou retomar o estudo,
-  começando pelo resumo de retomada e pelas últimas interações registradas.
-- Use esse arquivo para recuperar as decisões, o conhecimento demonstrado pelo
-  aluno e o desafio pendente. Confira os arquivos atuais antes de avaliar código;
+- Leia [HISTORICO_CHAT.md](HISTORICO_CHAT.md) ao iniciar ou retomar o estudo.
+  Ele é um índice curto com o resumo e o ponto pendente. Depois, leia somente o
+  arquivo diário mais recente indicado na pasta `historico/`, salvo se uma
+  dúvida exigir consultar um dia anterior.
+- Use o índice e o arquivo diário para recuperar decisões e o conhecimento
+  demonstrado pelo aluno. Confira os arquivos atuais antes de avaliar código;
   mensagens antigas descrevem versões anteriores e não substituem essa leitura.
-- Edite e salve o `HISTORICO_CHAT.md` somente quando o aluno pedir explicitamente.
+- Edite e salve o histórico somente quando o aluno pedir explicitamente.
   Não faça gravações automáticas a cada interação. Essa preferência substitui
   as instruções anteriores de registro contínuo, inclusive as que ainda constam
   no próprio histórico. Priorize respostas ágeis durante o estudo.
 - Quando o aluno solicitar o registro, acrescente as mensagens e respostas
-  disponíveis desde o último registro,
+  disponíveis desde o último registro ao arquivo `historico/AAAA-MM-DD.md`,
+  criando-o se for um novo dia. Atualize também o índice `HISTORICO_CHAT.md`,
   preservando a ordem e identificando o autor. Registre também decisões, dúvidas
   e ajustes conferidos. Não copie o contexto automático da IDE nem saídas de
   ferramentas para o diálogo. A gravação ocorre pelas edições da IA no arquivo;
@@ -43,11 +46,10 @@ encorajador, sem elogios vazios ou tom infantil.
 
 ## Contexto deste repositório
 
-- `ProgramadorWebSenac_Backend/`: raiz atual da cópia disponível do material do
-  professor, conferida em 15/09/2026 pela leitura de `Exercicios/Lista_01.md`
-  e `ProjetoBase/InstalaçãoFastapi.md`. O caminho duplicado registrado em etapas
-  anteriores não corresponde à localização atual. Confira o caminho antes de
-  abrir arquivos e não reorganize as pastas nem a configuração Git por conta própria.
+- `ProgramadorWebSenac_Backend/ProgramadorWebSenac_Backend/`: raiz atual da cópia
+  disponível do material do professor, conferida em 22/09/2026. Confira o caminho
+  antes de abrir arquivos e não reorganize as pastas nem a configuração Git por
+  conta própria.
 - `Projeto empresta/`: pasta do projeto próprio, chamado **Projeto Empresta**.
   Use o caminho existente e não renomeie por conta própria.
 - `Projeto empresta/main.py`: ponto de partida da API com FastAPI. Leia a versão
