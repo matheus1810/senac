@@ -12,7 +12,36 @@ def root():
     return {"mensagem": "Olá, FastAPI!"}
 
 @app.get("/saudacao")
-def saudacao():
+def saudacao(nome = "Visitante"):
     return{
-        "Message" : "Sauve"
+        "Message" : f"Olá: {nome}"
+    }
+
+@app.get("/sobre")
+def apresentacao():
+    return{
+        "Nome do Projeto" : "Empresta",
+        "Descrição" : "Sistema completo para gerenciamento de empréstimo de equipamentos"
+    }
+
+@app.get("/equipamento/{id_equipamento}")
+def retorna_equipamento(id_equipamento : int):
+    equipamento = [
+       {
+         "id" : 1,
+         "nome" : 'Câmera'
+       },
+        {
+         "id" : 2,
+         "nome" : 'Câmera'
+       },
+    ]
+    for item in equipamento:
+        if item["id"] == id_equipamento:
+            return item
+        else:
+            return "nada"
+
+    return{
+        "Equipamento" : item
     }

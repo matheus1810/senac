@@ -1,6 +1,6 @@
 CREATE TABLE `usuario`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `role_id` INT UNSIGNED NOT NULL,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `role_id` INT  NOT NULL,
     `nome` VARCHAR(255) NOT NULL,
     `data_nascimento` DATE NOT NULL,
     `email` VARCHAR(255) NOT NULL,
@@ -15,28 +15,28 @@ ALTER TABLE
 ALTER TABLE
     `usuario` ADD UNIQUE `usuario_cpf_unique`(`cpf`);
 CREATE TABLE `emprestimos`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `item_solicitacao_id` INT UNSIGNED NOT NULL UNIQUE,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `item_solicitacao_id` INT  NOT NULL UNIQUE,
     `data_emprestimo` DATETIME NOT NULL,
     `data_devolucao` DATETIME NULL,
     `observacoes` VARCHAR(255) NOT NULL,
     `estado_na_devolucao` VARCHAR(255) NULL
 );
 CREATE TABLE `solicitacao`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `id_aluno` INT NOT NULL,
     `data_solicitacao` DATETIME NOT NULL
 );
 CREATE TABLE `papeis`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `responsabilidade` VARCHAR(255) NOT NULL
 );
 CREATE TABLE `almoxarifado`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `descricao` VARCHAR(255) NOT NULL
 );
 CREATE TABLE `equipamentos`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `nome` VARCHAR(255) NOT NULL,
     `valor` DECIMAL(8, 2) NOT NULL,
     `numero_serie` VARCHAR(255) NOT NULL,
@@ -45,11 +45,11 @@ CREATE TABLE `equipamentos`(
     `id_almoxarifado` INT NOT NULL
 );
 CREATE TABLE `status_equipamentos`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `status` VARCHAR(255) NOT NULL
 ) COMMENT 'Disponível, emprestado, manutanção, indisponível';
 CREATE TABLE `item_solicitacao`(
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `id` INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `id_solicitacao` INT NOT NULL,
     `id_equipamento` INT NOT NULL,
     `status` ENUM('aprovado', 'negado', 'analise') NOT NULL DEFAULT 'analise'
