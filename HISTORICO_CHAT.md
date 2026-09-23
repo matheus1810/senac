@@ -11,7 +11,8 @@ depois o arquivo diário mais recente e confira o código atual antes de avaliar
 - [15/09/2026](historico/2026-09-15.md) — definição do projeto, modelagem SQL,
   decisões sobre empréstimos e revisão dos tipos das chaves.
 - [22/09/2026](historico/2026-09-22.md) — rotas FastAPI, parâmetros, busca em
-  listas, respostas 404, listagem, cadastro POST e início da atualização PUT.
+  listas, CRUD em memória, geração de IDs, ambiente virtual e separação de
+  rotas/controllers. Pendente: mover o modelo de entrada para `entidades`.
 
 Novos registros devem ser acrescentados ao arquivo correspondente à data da
 interação. Em um novo dia, crie outro arquivo no formato `AAAA-MM-DD.md` e
@@ -41,36 +42,60 @@ adicione seu link aqui. O histórico só é salvo quando o aluno pedir.
 
 ### Progresso atual da API
 
-O aluno implementou e informou sucesso nos testes de:
+- O aluno implementou e relatou testes bem-sucedidos de GET, POST, PUT e DELETE
+  em memória, incluindo 404, atualização conferida pelo GET e exclusão.
+- O POST usa o maior ID presente na lista + 1, calculado depois do laço.
+  O aluno testou exclusão seguida de cadastro e relatou que, ao esvaziar a
+  lista, os novos IDs começam em 1 e 2. IDs excluídos ainda podem ser reutilizados.
+- `Projeto empresta/app/main.py` é o ponto de entrada atual. Contém `/`,
+  `/saudacao`, POST, PUT, DELETE e a classe `EquipamentoEntrada(nome: str)`.
+- `app/routes/SobreRoutes.py` define `SobreRouter` e `/sobre`.
+- `app/routes/EquipamentoRoutes.py` define `EquipamentoRouter`, a listagem e
+  a consulta por ID. Na consulta, chama o controller, verifica `resultado is
+  None`, lança 404 ou retorna o equipamento. O aluno informou que testou.
+- `app/controllers/EquipamentoController.py` contém a única lista compartilhada,
+  `buscar_equipamentos()` e `buscar_equipamento_por_id(id_equipamento: int)`.
+  A busca retorna o item ou `None` depois do laço.
+- O `main.py` importa e registra os dois routers com `include_router` e ainda
+  importa a lista do controller para as operações que não foram separadas.
+- O aluno explicou que importar o router não basta: `include_router` registra
+  suas rotas na aplicação.
+- Ambiente virtual: `.venv`. A pasta `app` agora guarda código, não o ambiente.
+  O aluno confirmou a execução após mover o `main.py`, orientada com
+  `fastapi dev app/main.py` a partir de `Projeto empresta`.
+- O material do professor está nesta cópia em `ProgramadorWebSenac_Backend/`,
+  sem duplicação. O `main.py` do professor fica em `ProjetoBase/app/main.py`.
+  Há caminhos antigos no `AGENTS.md`; conferir os arquivos, sem reorganizar Git.
+- A IA verificou os arquivos por leitura; os testes da API foram relatados pelo
+  aluno. A IA não executou API ou SQL. Os dados ainda desaparecem ao reiniciar.
 
-- parâmetro de consulta em `GET /saudacao`, com valor padrão;
-- `GET /sobre`;
-- `GET /equipamentos`, usando uma lista compartilhada em memória;
-- `GET /equipamento/{id_equipamento}`, com validação de inteiro e erro 404;
-- modelo Pydantic `EquipamentoEntrada`, atualmente com `nome: str`;
-- `POST /equipamentos`, com geração simples de ID, inclusão na lista, retorno
-  do registro criado e código `201 Created`;
-- validação 422 quando o corpo obrigatório não é enviado.
+### Regras de negócio confirmadas, ainda não implementadas
 
-O aluno compreendeu que os registros em memória desaparecem quando a API
-reinicia, pois ainda não há persistência em banco.
+- Equipamento já usado em solicitação deve manter cadastro e ID para preservar
+  o histórico; pode ser marcado como indisponível.
+- Equipamento indisponível continua nas consultas, mas não pode entrar em novas
+  solicitações. O aluno confirmou ambas as regras.
+- O DELETE atual ainda remove fisicamente da lista. As regras acima são decisões
+  para implementação futura, não comportamento já garantido.
+- O SQL usa `equipamentos.status_id` ligado a `status_equipamentos`. Foi proposto
+  representar os status em memória, mas o aluno priorizou a divisão de pastas.
+  Esse exercício permanece pendente; nenhum status foi acrescentado ao código.
 
 ### Ponto exato de retomada
 
-O aluno começou `PUT /equipamento/{id_equipamento}`. Na versão conferida de
-`Projeto empresta/main.py`, a função:
+O aluno pediu para deixar a próxima etapa para amanhã e salvar o histórico.
+As duas rotas GET de equipamentos já estão separadas e o 404 foi recuperado.
 
-- recebe o ID pelo caminho e `dados: EquipamentoEntrada` pelo corpo;
-- percorre a lista;
-- altera `item["nome"]` e retorna o item quando encontra o ID;
-- possui o tratamento 404 apenas comentado;
-- ainda não foi registrado como testado.
+**Próximo desafio proposto, ainda não realizado:** criar
+`Projeto empresta/app/entidades/models.py`, mover para ele a classe
+`EquipamentoEntrada` e o import de `BaseModel`, e importar a classe no `main.py`.
+Na conferência do salvamento, a pasta `entidades` ainda não existe e a classe
+continua no `main.py`. Depois será trabalhada a separação do POST entre rota e
+controller. Não executar essas mudanças pelo aluno.
 
-Próximo desafio: ativar o 404 depois do `for` e testar um ID existente e um
-inexistente. Não entregar a função completa; retomar pela tentativa do aluno.
-
-A expressão `len(equipamentos) + 1` atende ao exercício atual, mas poderá
-repetir IDs quando houver exclusão. Tratar isso na etapa de DELETE.
+**Última pergunta pendente:** “Como fica esse novo import no `main.py`?”
+O aluno ainda não respondeu nem demonstrou essa alteração. Retomar pela tentativa
+dele e pela verificação de que a API continua iniciando.
 
 ## Sincronização
 
