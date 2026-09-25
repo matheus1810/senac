@@ -1,6 +1,6 @@
 # Índice do histórico — Projeto Empresta
 
-Último salvamento solicitado pelo aluno: **22/09/2026**.
+Último salvamento solicitado pelo aluno: **25/09/2026**.
 
 Este arquivo é o ponto rápido de retomada. O diálogo detalhado fica separado por
 dia na pasta [historico](historico/). Ao retomar o estudo, leia este índice,
@@ -12,7 +12,10 @@ depois o arquivo diário mais recente e confira o código atual antes de avaliar
   decisões sobre empréstimos e revisão dos tipos das chaves.
 - [22/09/2026](historico/2026-09-22.md) — rotas FastAPI, parâmetros, busca em
   listas, CRUD em memória, geração de IDs, ambiente virtual e separação de
-  rotas/controllers. Pendente: mover o modelo de entrada para `entidades`.
+  rotas/controllers. A transferência do modelo era pendente naquele dia.
+- [25/09/2026](historico/2026-09-25.md) — CRUD de status, erros de controller e
+  listas, vínculo por `status_id` e validação de existência. Pendente: distinguir
+  equipamento inexistente de status inexistente no PUT.
 
 Novos registros devem ser acrescentados ao arquivo correspondente à data da
 interação. Em um novo dia, crie outro arquivo no formato `AAAA-MM-DD.md` e
@@ -42,32 +45,31 @@ adicione seu link aqui. O histórico só é salvo quando o aluno pedir.
 
 ### Progresso atual da API
 
-- O aluno implementou e relatou testes bem-sucedidos de GET, POST, PUT e DELETE
-  em memória, incluindo 404, atualização conferida pelo GET e exclusão.
-- O POST usa o maior ID presente na lista + 1, calculado depois do laço.
-  O aluno testou exclusão seguida de cadastro e relatou que, ao esvaziar a
-  lista, os novos IDs começam em 1 e 2. IDs excluídos ainda podem ser reutilizados.
-- `Projeto empresta/app/main.py` é o ponto de entrada atual. Contém `/`,
-  `/saudacao`, POST, PUT, DELETE e a classe `EquipamentoEntrada(nome: str)`.
-- `app/routes/SobreRoutes.py` define `SobreRouter` e `/sobre`.
-- `app/routes/EquipamentoRoutes.py` define `EquipamentoRouter`, a listagem e
-  a consulta por ID. Na consulta, chama o controller, verifica `resultado is
-  None`, lança 404 ou retorna o equipamento. O aluno informou que testou.
-- `app/controllers/EquipamentoController.py` contém a única lista compartilhada,
-  `buscar_equipamentos()` e `buscar_equipamento_por_id(id_equipamento: int)`.
-  A busca retorna o item ou `None` depois do laço.
-- O `main.py` importa e registra os dois routers com `include_router` e ainda
-  importa a lista do controller para as operações que não foram separadas.
-- O aluno explicou que importar o router não basta: `include_router` registra
-  suas rotas na aplicação.
-- Ambiente virtual: `.venv`. A pasta `app` agora guarda código, não o ambiente.
-  O aluno confirmou a execução após mover o `main.py`, orientada com
-  `fastapi dev app/main.py` a partir de `Projeto empresta`.
-- O material do professor está nesta cópia em `ProgramadorWebSenac_Backend/`,
-  sem duplicação. O `main.py` do professor fica em `ProjetoBase/app/main.py`.
-  Há caminhos antigos no `AGENTS.md`; conferir os arquivos, sem reorganizar Git.
-- A IA verificou os arquivos por leitura; os testes da API foram relatados pelo
-  aluno. A IA não executou API ou SQL. Os dados ainda desaparecem ao reiniciar.
+- `Projeto empresta/app/main.py` cria a aplicação e registra os dois routers.
+  Os CRUDs de equipamentos e status estão separados entre rotas e controller.
+- `app/entidades/models.py` contém `EquipamentoEntrada(nome: str, status_id: int)`
+  e `EquipamentoStatus(status: str)`. A antiga transferência do modelo foi feita.
+- O cadastro de equipamento valida a existência do status e guarda `status_id`.
+  A rota retorna 201 no sucesso e 404 com mensagem de status quando recebe `None`.
+  O aluno confirmou os testes de cadastro e consulta, incluindo status inválido.
+- O PUT de equipamento valida o status, mas os dois motivos de falha retornam
+  `None`. A rota sempre informa equipamento não encontrado. Esse é o problema atual.
+- O PUT ainda altera apenas `nome`, sem guardar o novo `status_id`. Os dois
+  equipamentos iniciais também ainda não têm esse campo. Trabalhar depois da
+  distinção dos erros, sem resolver esses pontos pelo aluno.
+- O aluno relatou testes de listagem, busca, cadastro, atualização e exclusão de
+  status. Corrigiu chamada do controller errado (`AttributeError` em `.nome`),
+  conflito de nomes da rota/controller e remoção na lista errada (`ValueError`).
+- **Ressalva:** apesar do relato de 404 ao repetir DELETE de status, a rota salva
+  retorna diretamente o controller, sem tratar `None`. Não considerar esse 404
+  implementado. GET por ID e PUT de status têm 404, mas ainda dizem “Equipamento”.
+- O POST usa maior ID atual + 1; IDs excluídos ainda podem ser reutilizados.
+  Os dados estão em memória e desaparecem ao reiniciar.
+- Ambiente virtual: `.venv`. Comando de execução usado: `fastapi dev app/main.py`
+  dentro de `Projeto empresta`. Reiniciar resolveu a ausência da rota de status
+  em `/docs`, segundo o aluno; a causa exata de carregamento não foi comprovada.
+- A IA conferiu os arquivos por leitura. Os testes foram relatados pelo aluno;
+  a IA não executou API ou SQL. Conferir caminhos atuais do material do professor.
 
 ### Regras de negócio confirmadas, ainda não implementadas
 
@@ -77,25 +79,29 @@ adicione seu link aqui. O histórico só é salvo quando o aluno pedir.
   solicitações. O aluno confirmou ambas as regras.
 - O DELETE atual ainda remove fisicamente da lista. As regras acima são decisões
   para implementação futura, não comportamento já garantido.
-- O SQL usa `equipamentos.status_id` ligado a `status_equipamentos`. Foi proposto
-  representar os status em memória, mas o aluno priorizou a divisão de pastas.
-  Esse exercício permanece pendente; nenhum status foi acrescentado ao código.
+- O vínculo por `status_id` agora existe no cadastro em memória. A exclusão de
+  status ainda não verifica referências de equipamentos; essa regra não foi
+  discutida nesta conversa. Não presumir integridade automática.
 
 ### Ponto exato de retomada
 
-O aluno pediu para deixar a próxima etapa para amanhã e salvar o histórico.
-As duas rotas GET de equipamentos já estão separadas e o 404 foi recuperado.
+O aluno observou que o PUT devolve a mesma mensagem para equipamento inexistente
+e status inexistente. Ambos os caminhos devolvem `None` no controller.
 
-**Próximo desafio proposto, ainda não realizado:** criar
-`Projeto empresta/app/entidades/models.py`, mover para ele a classe
-`EquipamentoEntrada` e o import de `BaseModel`, e importar a classe no `main.py`.
-Na conferência do salvamento, a pasta `entidades` ainda não existe e a classe
-continua no `main.py`. Depois será trabalhada a separação do POST entre rota e
-controller. Não executar essas mudanças pelo aluno.
+A IA propôs devolver uma tupla com resultado e motivo da falha, recebida na rota
+como `resultado, erro = atualizarEquipamentoController(id_equipamento, dados)`.
+Todos os caminhos precisariam devolver esse par; sucesso poderia usar erro `None`.
+**É apenas uma proposta didática: ainda não foi implementada nem escolhida de
+forma definitiva pelo aluno.** A IA reconheceu que a orientação anterior de usar
+somente `None` era insuficiente para distinguir os motivos.
 
-**Última pergunta pendente:** “Como fica esse novo import no `main.py`?”
-O aluno ainda não respondeu nem demonstrou essa alteração. Retomar pela tentativa
-dele e pela verificação de que a API continua iniciando.
+**Última pergunta pendente:** “Como você escreveria o retorno do caso ‘status não
+encontrado’ usando esse par?”
+
+O aluno respondeu que faria depois e pediu um novo arquivo de histórico de hoje.
+Retomar pela tentativa dele, explicando a tupla se necessário. Não preencher os
+retornos nem alterar a API pelo aluno. O diário de 25/09 contém os detalhes e os
+limites das verificações.
 
 ## Sincronização
 
