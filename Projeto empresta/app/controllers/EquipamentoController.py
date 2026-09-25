@@ -53,21 +53,32 @@ def cadastraEquipamentoController(equipamento : EquipamentoEntrada):
             maior = item["id"]
     
     novo_id = maior + 1 
+    
+    status_encontrado = buscar_status_equipamento_por_id_controller(equipamento.status_id)
+    
+    if (status_encontrado is None):
+        return
 
     novo_equipamento = {
         "id": novo_id,
-        "nome":equipamento.nome
+        "nome":equipamento.nome,
+        "status_id" : equipamento.status_id
     }
     
     equipamentos.append(novo_equipamento)
     return novo_equipamento
 
 def atualizarEquipamentoController(id_equipamento:int, dados:EquipamentoEntrada):
-     
-        for item in equipamentos:
-                    if item["id"] == id_equipamento:
-                        item["nome"] = dados.nome
-                        return item 
+    
+    status_encontrado = buscar_status_equipamento_por_id_controller(dados.status_id)
+    
+    if (status_encontrado is None):
+        return
+    
+    for item in equipamentos:
+                if item["id"] == id_equipamento:
+                    item["nome"] = dados.nome
+                    return item 
 
 def excluirEquipamentoController(id_equipamento:int):
 
@@ -90,6 +101,7 @@ def buscar_status_equipamento_por_id_controller( status_id : int):
     return None
 
 def cadastra_status_equipamento_controller( eq_status: EquipamentoStatus ):
+    
     maior = 0
     for item in status_equipamento:
        
@@ -104,4 +116,17 @@ def cadastra_status_equipamento_controller( eq_status: EquipamentoStatus ):
     }
     
     status_equipamento.append(status_equipamento_novo)
-    return status_equipamento
+    return status_equipamento_novo
+
+def atualiza_status_equipamento_controller(status_id : int, equipamento : EquipamentoStatus):
+    for item in status_equipamento:
+        if item["id"] == status_id:
+            item["status"] = equipamento.status
+            return item 
+
+def excluirStatusEquipamentoController(id_status:int):
+
+    for item in status_equipamento:
+        if item["id"] == id_status:
+            status_equipamento.remove(item)
+            return f"item {id_status} foi removido com sucesso"
