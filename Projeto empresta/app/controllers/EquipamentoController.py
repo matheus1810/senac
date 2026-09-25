@@ -89,7 +89,7 @@ def buscar_status_equipamento_por_id_controller( status_id : int):
     
     return None
 
-def cadastra_status_equipamento_controller(eq_status: str):
+def cadastra_status_equipamento_controller( eq_status: EquipamentoStatus ):
     maior = 0
     for item in status_equipamento:
        

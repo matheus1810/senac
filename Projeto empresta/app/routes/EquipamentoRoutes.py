@@ -80,6 +80,6 @@ def buscar_status_quipamento():
 def buscar_status_equipamento_por_id( status_id : int ):
     return buscar_status_equipamento_por_id_controller(status_id)
 
-@EquipamentoRouter.post('/status-equipamento/{status}')
-def cadastra_status_equipamento( status : str ):
+@EquipamentoRouter.post('/status-equipamento')
+def cadastra_status_equipamento( status : EquipamentoStatus ):
     return cadastra_status_equipamento_controller(status)
