@@ -1,4 +1,5 @@
-from entidades.models import EquipamentoEntrada,EquipamentoStatus
+from entidades.models import EquipamentoEntrada,EquipamentoStatus,StatusEquipamentoTabela
+from sqlmodel import Session, select
 
 equipamentos = [
        {
@@ -89,8 +90,10 @@ def excluirEquipamentoController(id_equipamento:int):
 
 #------------------------------- STATUS EQUIPAMENTO CONTROLLERS ------------------------------------------------------------
 
-def buscar_status_quipamento_controller():
-    return status_equipamento
+def buscar_status_quipamento_controller(db:Session):
+    statement = select(StatusEquipamentoTabela)
+    status_encontrados = db.exec(statement).all()
+    return status_encontrados
 
 def buscar_status_equipamento_por_id_controller( status_id : int):
 

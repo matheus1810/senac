@@ -5,3 +5,7 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+AGENTS.md
+HISTORICO_CHAT.md
+
+historico/

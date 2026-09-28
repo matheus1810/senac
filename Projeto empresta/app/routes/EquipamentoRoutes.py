@@ -1,4 +1,6 @@
-from fastapi import FastAPI,APIRouter,status, HTTPException
+from fastapi import FastAPI,APIRouter,status, HTTPException,Depends
+from sqlmodel import Session
+from db.db import get_db
 
 from controllers.EquipamentoController import (
 buscar_equipamentos, 
@@ -60,7 +62,7 @@ def atualizarEquipamento(id_equipamento:int, dados:EquipamentoEntrada):
         )
 
     return equipamento_atualizado
-  
+
 @EquipamentoRouter.delete("/equipamento/{id_equipamento}")
 def excluirEquipamento(id_equipamento:int):
 
@@ -76,8 +78,8 @@ def excluirEquipamento(id_equipamento:int):
     return equipamento_excluido
 
 @EquipamentoRouter.get("/status-equipamento")
-def buscar_status_quipamento():
-    return buscar_status_quipamento_controller()
+def buscar_status_quipamento(db: Session = Depends(get_db)):
+    return buscar_status_quipamento_controller(db)
 
 @EquipamentoRouter.get("/status-equipamento/{status_id}")
 def buscar_status_equipamento_por_id( status_id : int ):
