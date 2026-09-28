@@ -12,26 +12,6 @@ equipamentos = [
        }, 
     ]
 
-status_equipamento = [
-    {
-        "id" : 1,
-        "status" : 'DISPONIVEL'
-    },
-     {
-        "id" : 2,
-        "status" : 'EMPRESTADO'
-    },
-     {
-        "id" : 3,
-        "status" : 'IDISPONIVEL'
-    },
-     {
-        "id" : 4,
-        "status" : 'MANUTENCAO'
-    }
-]
-
-
 #------------------------------- EQUIPAMENTO CONTROLLERS ------------------------------------------------------------
 
 def buscar_equipamentos():
@@ -45,7 +25,7 @@ def buscar_equipamento_por_id(id_equipamento : int):
 
     return None
 
-def cadastraEquipamentoController(equipamento : EquipamentoEntrada):
+def cadastraEquipamentoController(equipamento: EquipamentoEntrada, db: Session):
     
     maior = 0
     for item in equipamentos:
@@ -55,7 +35,7 @@ def cadastraEquipamentoController(equipamento : EquipamentoEntrada):
     
     novo_id = maior + 1 
     
-    status_encontrado = buscar_status_equipamento_por_id_controller(equipamento.status_id)
+    status_encontrado = buscar_status_equipamento_por_id_controller(equipamento.status_id, db)
     
     if (status_encontrado is None):
         return
@@ -69,9 +49,9 @@ def cadastraEquipamentoController(equipamento : EquipamentoEntrada):
     equipamentos.append(novo_equipamento)
     return novo_equipamento
 
-def atualizarEquipamentoController(id_equipamento:int, dados:EquipamentoEntrada):
+def atualizarEquipamentoController(id_equipamento: int, dados: EquipamentoEntrada, db: Session):
     
-    status_encontrado = buscar_status_equipamento_por_id_controller(dados.status_id)
+    status_encontrado = buscar_status_equipamento_por_id_controller(dados.status_id, db)
     
     if (status_encontrado is None):
         return
@@ -95,41 +75,39 @@ def buscar_status_quipamento_controller(db:Session):
     status_encontrados = db.exec(statement).all()
     return status_encontrados
 
-def buscar_status_equipamento_por_id_controller( status_id : int):
+def buscar_status_equipamento_por_id_controller(status_id: int, db: Session):
+    return db.get(StatusEquipamentoTabela, status_id)
 
-    for status in status_equipamento:
-        if status["id"] == status_id:
-            return status
+
+def cadastra_status_equipamento_controller(db:Session, status_equipamento: EquipamentoStatus):
     
-    return None
+    novo_status_equipamento = StatusEquipamentoTabela(**status_equipamento.model_dump())
 
-def cadastra_status_equipamento_controller( eq_status: EquipamentoStatus ):
-    
-    maior = 0
-    for item in status_equipamento:
-       
-        if item["id"] > maior:
-            maior = item["id"]
-    
-    novo_id = maior + 1 
+    db.add(novo_status_equipamento)
+    db.commit()
+    db.refresh(novo_status_equipamento)
 
-    status_equipamento_novo = {
-        "id": novo_id,
-        "status":eq_status.status
-    }
-    
-    status_equipamento.append(status_equipamento_novo)
-    return status_equipamento_novo
+    return novo_status_equipamento
 
-def atualiza_status_equipamento_controller(status_id : int, equipamento : EquipamentoStatus):
-    for item in status_equipamento:
-        if item["id"] == status_id:
-            item["status"] = equipamento.status
-            return item 
+def atualiza_status_equipamento_controller(
+    status_id: int, equipamento: EquipamentoStatus, db: Session
+):
+    status_equipamento = buscar_status_equipamento_por_id_controller(status_id, db)
+    if status_equipamento is None:
+        return None
 
-def excluirStatusEquipamentoController(id_status:int):
+    status_equipamento.status = equipamento.status
+    db.add(status_equipamento)
+    db.commit()
+    db.refresh(status_equipamento)
+    return status_equipamento
 
-    for item in status_equipamento:
-        if item["id"] == id_status:
-            status_equipamento.remove(item)
-            return f"item {id_status} foi removido com sucesso"
+
+def excluirStatusEquipamentoController(id_status: int, db: Session):
+    status_equipamento = buscar_status_equipamento_por_id_controller(id_status, db)
+    if status_equipamento is None:
+        return None
+
+    db.delete(status_equipamento)
+    db.commit()
+    return f"item {id_status} foi removido com sucesso"

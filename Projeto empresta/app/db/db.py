@@ -11,4 +11,3 @@ engine = create_engine(url)
 def get_db():
         with Session(engine) as session:
             yield session
-    
