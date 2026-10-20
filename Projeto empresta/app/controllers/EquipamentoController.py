@@ -1,113 +1,105 @@
-from entidades.models import EquipamentoEntrada,EquipamentoStatus,StatusEquipamentoTabela
+from fastapi import HTTPException
 from sqlmodel import Session, select
+from entidades.models import (EquipamentoEntrada, EquipamentoTabela, EquipamentoStatus,
+                              StatusEquipamentoTabela, AlmoxarifadoTabela, ItemSolicitacaoTabela,
+                              EmprestimoTabela)
 
-equipamentos = [
-       {
-         "id" : 1,
-         "nome" : 'Câmera'
-       },
-        {
-         "id" : 2,
-         "nome" : 'Notebook'
-       }, 
-    ]
 
-#------------------------------- EQUIPAMENTO CONTROLLERS ------------------------------------------------------------
+def buscar_equipamentos(db: Session):
+    return db.exec(select(EquipamentoTabela)).all()
 
-def buscar_equipamentos():
-    return equipamentos
 
-def buscar_equipamento_por_id(id_equipamento : int):
-   
-    for item in equipamentos:
-            if item["id"] == id_equipamento:
-                return item
+def buscar_equipamento_por_id(id_equipamento: int, db: Session):
+    return db.get(EquipamentoTabela, id_equipamento)
 
-    return None
 
-def cadastraEquipamentoController(equipamento: EquipamentoEntrada, db: Session):
-    
-    maior = 0
-    for item in equipamentos:
-       
-        if item["id"] > maior:
-            maior = item["id"]
-    
-    novo_id = maior + 1 
-    
-    status_encontrado = buscar_status_equipamento_por_id_controller(equipamento.status_id, db)
-    
-    if (status_encontrado is None):
-        return
+def validar_referencias(dados: EquipamentoEntrada, db: Session):
+    if db.get(StatusEquipamentoTabela, dados.status_id) is None:
+        raise HTTPException(404, "Status nao encontrado")
+    if db.get(AlmoxarifadoTabela, dados.id_almoxarifado) is None:
+        raise HTTPException(404, "Almoxarifado nao encontrado")
 
-    novo_equipamento = {
-        "id": novo_id,
-        "nome":equipamento.nome,
-        "status_id" : equipamento.status_id
-    }
-    
-    equipamentos.append(novo_equipamento)
-    return novo_equipamento
+
+def cadastraEquipamentoController(dados: EquipamentoEntrada, db: Session):
+    validar_referencias(dados, db)
+    equipamento = EquipamentoTabela(**dados.model_dump())
+    db.add(equipamento)
+    db.commit()
+    db.refresh(equipamento)
+    return equipamento
+
+
+def equipamento_bloqueado(id_equipamento: int, db: Session):
+    return db.exec(select(EmprestimoTabela).join(ItemSolicitacaoTabela,
+        EmprestimoTabela.item_solicitacao_id == ItemSolicitacaoTabela.id).where(
+            ItemSolicitacaoTabela.id_equipamento == id_equipamento,
+            EmprestimoTabela.data_devolucao.is_(None))).first() is not None
+
 
 def atualizarEquipamentoController(id_equipamento: int, dados: EquipamentoEntrada, db: Session):
-    
-    status_encontrado = buscar_status_equipamento_por_id_controller(dados.status_id, db)
-    
-    if (status_encontrado is None):
-        return
-    
-    for item in equipamentos:
-                if item["id"] == id_equipamento:
-                    item["nome"] = dados.nome
-                    return item 
+    equipamento = db.exec(select(EquipamentoTabela).where(
+        EquipamentoTabela.id == id_equipamento).with_for_update()).first()
+    if equipamento is None:
+        return None
+    validar_referencias(dados, db)
+    if equipamento_bloqueado(id_equipamento, db):
+        raise HTTPException(409, "Equipamento possui emprestimo ativo")
+    for campo, valor in dados.model_dump().items():
+        setattr(equipamento, campo, valor)
+    db.add(equipamento)
+    db.commit()
+    db.refresh(equipamento)
+    return equipamento
 
-def excluirEquipamentoController(id_equipamento:int):
 
-    for item in equipamentos:
-        if item["id"] == id_equipamento:
-            equipamentos.remove(item)
-            return f"item {id_equipamento} foi removido com sucesso"
+def excluirEquipamentoController(id_equipamento: int, db: Session):
+    equipamento = db.exec(select(EquipamentoTabela).where(
+        EquipamentoTabela.id == id_equipamento).with_for_update()).first()
+    if equipamento is None:
+        return None
+    if db.exec(select(ItemSolicitacaoTabela).where(
+            ItemSolicitacaoTabela.id_equipamento == id_equipamento)).first():
+        raise HTTPException(409, "Equipamento possui solicitacoes vinculadas")
+    db.delete(equipamento)
+    db.commit()
+    return {"detail": "Equipamento removido"}
 
-#------------------------------- STATUS EQUIPAMENTO CONTROLLERS ------------------------------------------------------------
 
-def buscar_status_quipamento_controller(db:Session):
-    statement = select(StatusEquipamentoTabela)
-    status_encontrados = db.exec(statement).all()
-    return status_encontrados
+def buscar_status_quipamento_controller(db: Session):
+    return db.exec(select(StatusEquipamentoTabela)).all()
+
 
 def buscar_status_equipamento_por_id_controller(status_id: int, db: Session):
     return db.get(StatusEquipamentoTabela, status_id)
 
 
-def cadastra_status_equipamento_controller(db:Session, status_equipamento: EquipamentoStatus):
-    
-    novo_status_equipamento = StatusEquipamentoTabela(**status_equipamento.model_dump())
-
-    db.add(novo_status_equipamento)
+def cadastra_status_equipamento_controller(db: Session, dados: EquipamentoStatus):
+    registro = StatusEquipamentoTabela(**dados.model_dump())
+    db.add(registro)
     db.commit()
-    db.refresh(novo_status_equipamento)
+    db.refresh(registro)
+    return registro
 
-    return novo_status_equipamento
 
-def atualiza_status_equipamento_controller(
-    status_id: int, equipamento: EquipamentoStatus, db: Session
-):
-    status_equipamento = buscar_status_equipamento_por_id_controller(status_id, db)
-    if status_equipamento is None:
+def atualiza_status_equipamento_controller(status_id: int, dados: EquipamentoStatus, db: Session):
+    registro = db.get(StatusEquipamentoTabela, status_id)
+    if registro is None:
         return None
-
-    status_equipamento.status = equipamento.status
-    db.add(status_equipamento)
+    if db.exec(select(EquipamentoTabela).where(EquipamentoTabela.status_id == status_id)).first():
+        raise HTTPException(409, "Status em uso nao pode ser alterado")
+    registro.status = dados.status
+    db.add(registro)
     db.commit()
-    db.refresh(status_equipamento)
-    return status_equipamento
+    db.refresh(registro)
+    return registro
 
 
-def excluirStatusEquipamentoController(id_status: int, db: Session):
-    status_equipamento = buscar_status_equipamento_por_id_controller(id_status, db)
-    if status_equipamento is None:
+def excluirStatusEquipamentoController(status_id: int, db: Session):
+    registro = db.get(StatusEquipamentoTabela, status_id)
+    if registro is None:
         return None
-
-    db.delete(status_equipamento)
+    if db.exec(select(EquipamentoTabela).where(EquipamentoTabela.status_id == status_id)).first():
+        raise HTTPException(409, "Status em uso nao pode ser excluido")
+    db.delete(registro)
     db.commit()
-    return f"item {id_status} foi removido com sucesso"
+    return {"detail": "Status removido"}

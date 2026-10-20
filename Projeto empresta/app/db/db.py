@@ -3,7 +3,10 @@ from config.Config import settings
 
 from sqlmodel import create_engine,Session
 
-url = f"mysql+pymysql://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}"
+from sqlalchemy import URL
+
+url = URL.create("mysql+pymysql", username=settings.db_user, password=settings.db_password,
+                 host=settings.db_host, port=settings.db_port, database=settings.db_name)
 
 engine = create_engine(url)
 

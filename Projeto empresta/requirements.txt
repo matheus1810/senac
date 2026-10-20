@@ -1,0 +1,7 @@
+fastapi[standard]
+sqlmodel
+pymysql
+pydantic-settings
+pyjwt
+argon2_cffi
+passlib[argon2]

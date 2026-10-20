@@ -1,5 +1,6 @@
 from fastapi import FastAPI, APIRouter, status, HTTPException, Depends
 from sqlmodel import Session
+from dependencies.dependencies import get_current_user, require_roles
 from db.db import get_db
 
 from controllers.EquipamentoController import (
@@ -18,18 +19,18 @@ from controllers.EquipamentoController import (
 
 from entidades.models import EquipamentoEntrada, EquipamentoStatus
 
-EquipamentoRouter = APIRouter()
+EquipamentoRouter = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @EquipamentoRouter.get("/equipamentos", tags=["Equipamentos"])
-def get_equipamentos():
-    return buscar_equipamentos()
+def get_equipamentos(db: Session = Depends(get_db)):
+    return buscar_equipamentos(db)
 
 
 @EquipamentoRouter.get("/equipamento/{id_equipamento}", tags=["Equipamentos"])
-def busca_equipamento_por_id(id_equipamento: int):
+def busca_equipamento_por_id(id_equipamento: int, db: Session = Depends(get_db)):
 
-    resultado = buscar_equipamento_por_id(id_equipamento)
+    resultado = buscar_equipamento_por_id(id_equipamento, db)
 
     if resultado is None:
         raise HTTPException(
@@ -43,8 +44,7 @@ def busca_equipamento_por_id(id_equipamento: int):
 @EquipamentoRouter.post(
     "/equipamentos",
     status_code=status.HTTP_201_CREATED,
-    tags=["Equipamentos"]
-)
+    tags=["Equipamentos"], dependencies=[Depends(require_roles("administrador"))])
 def cadastraEquipamento(equipamento: EquipamentoEntrada, db: Session = Depends(get_db)):
 
     equipamento_cadastrado = cadastraEquipamentoController(equipamento, db)
@@ -58,7 +58,7 @@ def cadastraEquipamento(equipamento: EquipamentoEntrada, db: Session = Depends(g
     return equipamento_cadastrado
 
 
-@EquipamentoRouter.put("/equipamento/{id_equipamento}", tags=["Equipamentos"])
+@EquipamentoRouter.put("/equipamento/{id_equipamento}", tags=["Equipamentos"], dependencies=[Depends(require_roles("administrador"))])
 def atualizarEquipamento(id_equipamento: int, dados: EquipamentoEntrada, db: Session = Depends(get_db)):
 
     equipamento_atualizado = atualizarEquipamentoController(
@@ -76,10 +76,10 @@ def atualizarEquipamento(id_equipamento: int, dados: EquipamentoEntrada, db: Ses
     return equipamento_atualizado
 
 
-@EquipamentoRouter.delete("/equipamento/{id_equipamento}", tags=["Equipamentos"])
-def excluirEquipamento(id_equipamento: int):
+@EquipamentoRouter.delete("/equipamento/{id_equipamento}", tags=["Equipamentos"], dependencies=[Depends(require_roles("administrador"))])
+def excluirEquipamento(id_equipamento: int, db: Session = Depends(get_db)):
 
-    equipamento_excluido = excluirEquipamentoController(id_equipamento)
+    equipamento_excluido = excluirEquipamentoController(id_equipamento, db)
 
     if equipamento_excluido is None:
         raise HTTPException(
@@ -115,8 +115,7 @@ def buscar_status_equipamento_por_id(status_id: int, db: Session = Depends(get_d
 @EquipamentoRouter.post(
     "/status-equipamento",
     status_code=status.HTTP_201_CREATED,
-    tags=["Status Equipamentos"]
-)
+    tags=["Status Equipamentos"], dependencies=[Depends(require_roles("administrador"))])
 def cadastra_status_equipamento(status: EquipamentoStatus, db: Session = Depends(get_db)):
 
     status_equipamento = cadastra_status_equipamento_controller(db, status)
@@ -126,8 +125,7 @@ def cadastra_status_equipamento(status: EquipamentoStatus, db: Session = Depends
 
 @EquipamentoRouter.put(
     "/status-equipamento/{status_id}",
-    tags=["Status Equipamentos"]
-)
+    tags=["Status Equipamentos"], dependencies=[Depends(require_roles("administrador"))])
 def atualiza_status_equipamento(
     status_id: int,
     equipamento: EquipamentoStatus,
@@ -151,8 +149,7 @@ def atualiza_status_equipamento(
 
 @EquipamentoRouter.delete(
     "/status-equipamento/{status_id}",
-    tags=["Status Equipamentos"]
-)
+    tags=["Status Equipamentos"], dependencies=[Depends(require_roles("administrador"))])
 def excluirStatusEquipamento(status_id: int, db: Session = Depends(get_db)):
 
     status_equipamento_excluido = excluirStatusEquipamentoController(status_id, db)
