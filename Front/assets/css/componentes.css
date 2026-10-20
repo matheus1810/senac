@@ -1,0 +1,306 @@
+.card {
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    padding: 26px 24px;
+    margin-bottom: 28px
+}
+
+.card p:last-child {
+    margin-bottom: 0
+}
+
+.botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 10px 24px;
+    border: 1px solid var(--borda);
+    background: white;
+    border-radius: 7px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--texto);
+    white-space: normal;
+    text-align: center
+}
+
+.botao:hover {
+    background: #edf0f4
+}
+
+.botao.primario {
+    background: var(--primaria);
+    border-color: var(--primaria);
+    color: white;
+    font-weight: bold;
+    min-width: 120px
+}
+
+.botao.primario:hover {
+    background: #304866
+}
+
+.botao:disabled {
+    opacity: .5;
+    cursor: not-allowed
+}
+
+.link {
+    border: 0;
+    background: none;
+    padding: 0;
+    text-decoration: none;
+    color: inherit;
+    font-size: 13px;
+    cursor: pointer
+}
+
+.link:hover {
+    text-decoration: underline
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    min-height: 40px;
+    margin-bottom: 20px
+}
+
+.acoes .primario {
+    min-width: 120px
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0
+}
+
+.campo label {
+    color: var(--muted);
+    font-size: 13px
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    min-height: 42px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    background: white;
+    padding: 10px 12px;
+    color: var(--texto);
+    font-size: 13px
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: 2px solid #405b7f40;
+    border-color: var(--primaria)
+}
+
+.campo textarea {
+    min-height: 100px;
+    resize: vertical
+}
+
+.campo input[readonly] {
+    background: #f8f9fb
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 28px
+}
+
+.form-card {
+    min-height: 565px;
+    padding: 28px 24px
+}
+
+.form-card h2 {
+    margin-bottom: 26px
+}
+
+.form-card .form-grid+h2 {
+    margin-top: 32px
+}
+
+.form-card>.campo {
+    margin-top: 32px
+}
+
+.form-card>.botao {
+    margin-top: 24px
+}
+
+.filtros {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    padding: 16px 19px;
+    margin-bottom: 28px
+}
+
+.filtros .campo {
+    flex: 1
+}
+
+.filtros .campo:first-child {
+    flex: 1.4
+}
+
+.filtros .botao {
+    margin-left: auto;
+    min-width: 150px
+}
+
+.tabela-container {
+    overflow-x: auto;
+    margin-bottom: 28px
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 13px;
+    white-space: nowrap
+}
+
+th,
+td {
+    padding: 16px 11px;
+    border: 1px solid var(--borda);
+    text-align: left;
+    height: 48px
+}
+
+td {
+    border-left: 0;
+    border-right: 0
+}
+
+td:first-child {
+    border-left: 1px solid var(--borda)
+}
+
+td:last-child {
+    border-right: 1px solid var(--borda)
+}
+
+th {
+    height: 44px;
+    background: #eef1f5;
+    color: #69707b;
+    font-weight: bold;
+    padding-top: 12px;
+    padding-bottom: 12px
+}
+
+td .botao {
+    padding: 0;
+    border: 0;
+    background: none;
+    min-height: 24px;
+    text-transform: none
+}
+
+td .link+.link {
+    margin-left: 5px
+}
+
+.card .tabela-container:last-child {
+    margin-bottom: 0
+}
+
+.checks {
+    display: grid;
+    gap: 20px
+}
+
+.checks label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px
+}
+
+.checks input {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--primaria);
+    margin: 0
+}
+
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 26px
+}
+
+.resumo h3 {
+    margin: 7px 0
+}
+
+.editor {
+    max-width: 616px;
+    margin-top: 12px
+}
+
+.editor .campo {
+    margin-bottom: 30px
+}
+
+.editor .checks {
+    margin-bottom: 25px
+}
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    max-width: min(440px, calc(100vw - 48px));
+    background: #28384e;
+    color: white;
+    padding: 16px 22px;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px #0002;
+    z-index: 30;
+    line-height: 1.5
+}
+
+dialog {
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    max-width: 520px;
+    width: calc(100% - 32px);
+    padding: 28px
+}
+
+dialog::backdrop {
+    background: #18243477
+}
+
+dialog form {
+    margin-top: 24px
+}
+
+.vazio {
+    padding: 15px;
+    background: white;
+    border: 1px solid var(--borda)
+}

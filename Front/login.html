@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Gestão de Equipamentos</title>
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/componentes.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+</head>
+
+<body class="pagina-login">
+    <main class="login">
+        <header>
+            <h1>Gestão de Equipamentos</h1>
+            <p>Acesso ao sistema</p>
+        </header>
+        <form>
+            <div class="campo">
+                <label for="email">E-mail *</label>
+                <input 
+                id="email" 
+                name="email" 
+                type="email"
+                placeholder="admin@escola.edu.br" 
+                autocomplete="username" 
+                required>
+            </div>
+
+            <div class="campo">
+                <label for="senha">Senha *</label>
+                <input 
+                id="senha" 
+                name="senha" 
+                type="password"
+                placeholder="••••••••••" 
+                autocomplete="current-password" 
+                required>
+            </div>
+            
+            <a class="botao primario"
+                href="dashboard.html">Entrar
+            </a>
+                <button 
+                type="button" 
+                class="link recuperar">Esqueci minha senha</button>
+        </form>
+        <footer>Interface estática em HTML e CSS.<br><a href="usuario_dashboard.html">Acessar demonstração do usuário</a>
+        </footer>
+    </main>
+    <script src="assets/js/app.js" defer></script>
+</body>
+
+</html>

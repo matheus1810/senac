@@ -1,0 +1,378 @@
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--menu);
+    background: var(--sidebar);
+    color: #bdc1c9;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 16px 20px;
+    overflow: auto;
+    z-index: 10
+}
+
+.marca {
+    padding: 0 12px 40px;
+    color: white
+}
+
+.marca small {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #cdd0d6;
+    margin-bottom: 6px
+}
+
+.marca strong {
+    font-size: 23px;
+    letter-spacing: .3px
+}
+
+.nav-link {
+    display: block;
+    width: 100%;
+    border: 0;
+    background: none;
+    text-decoration: none;
+    text-align: left;
+    color: inherit;
+    padding: 14px 22px;
+    margin: 0 0 8px;
+    border-radius: 8px;
+    font-size: 15px
+}
+
+.nav-link:hover,
+.nav-link.ativo {
+    background: var(--ativo);
+    color: white
+}
+
+.nav-link.ativo {
+    font-weight: bold
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 60px
+}
+
+.sidebar-footer .nav-link {
+    font-size: 12px;
+    padding: 8px 12px
+}
+
+.sidebar-footer small {
+    display: block;
+    font-size: 10px;
+    padding: 18px 12px 0;
+    color: #aeb4bd
+}
+
+.subnav {
+    display: flex;
+    gap: 20px;
+    padding: 0 22px 12px;
+    font-size: 12px
+}
+
+.app {
+    margin-left: var(--menu)
+}
+
+.cabecalho {
+    height: 77px;
+    border-bottom: 1px solid var(--borda);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px 35px;
+    gap: 16px
+}
+
+.cabecalho p {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 0;
+    letter-spacing: .2px
+}
+
+.perfil {
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 20px
+}
+
+.avatar {
+    width: 29px;
+    height: 29px;
+    border-radius: 50%;
+    background: #e1e4e8
+}
+
+.app main {
+    padding: 28px 40px 60px 35px
+}
+
+.menu-toggle {
+    display: none !important
+}
+
+.duas-colunas {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 28px
+}
+
+.duas-colunas.iguais {
+    grid-template-columns: 1fr 1fr
+}
+
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+    margin: 10px 60px 29px 0
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2.4fr) minmax(250px, 1fr);
+    gap: 34px
+}
+
+.config-grid .editor {
+    max-width: none;
+    margin-top: 0
+}
+
+.config-grid .tabela-container {
+    margin-top: 0
+}
+
+.menu-toggle {
+    flex-shrink: 0
+}
+
+@media(max-width:1050px) {
+    :root {
+        --menu: 215px
+    }
+
+    .marca strong {
+        font-size: 20px
+    }
+
+    .app main {
+        padding: 24px
+    }
+
+    .duas-colunas,
+    .config-grid {
+        grid-template-columns: 1fr
+    }
+
+    .indicadores {
+        margin-right: 0;
+        grid-template-columns: repeat(2, 1fr)
+    }
+
+    .filtros {
+        flex-wrap: wrap
+    }
+
+    .perfil {
+        gap: 8px
+    }
+
+    .cabecalho {
+        padding-left: 24px
+    }
+}
+
+@media(max-width:700px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform .2s;
+        width: 250px;
+        box-shadow: 5px 0 30px #0002
+    }
+
+    .sidebar.aberto {
+        transform: translateX(0)
+    }
+
+    .app {
+        margin-left: 0
+    }
+
+    .menu-toggle {
+        display: inline-flex !important;
+        padding: 8px !important;
+        min-width: 38px !important
+    }
+
+    .cabecalho {
+        height: auto;
+        min-height: 77px;
+        padding: 14px 16px
+    }
+
+    .cabecalho h1 {
+        font-size: 19px
+    }
+
+    .cabecalho>div:nth-child(2) {
+        flex: 1
+    }
+
+    .perfil {
+        font-size: 0
+    }
+
+    .avatar {
+        width: 24px;
+        height: 24px
+    }
+
+    .app main {
+        padding: 20px 16px
+    }
+
+    .indicadores {
+        gap: 12px
+    }
+
+    .duas-colunas.iguais {
+        grid-template-columns: 1fr
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 22px !important
+    }
+
+    .resumo {
+        grid-template-columns: 1fr !important;
+        gap: 16px
+    }
+
+    .card {
+        padding: 20px !important
+    }
+
+    .acoes {
+        flex-wrap: wrap
+    }
+
+    .filtros .campo {
+        min-width: 100%;
+        flex: 1
+    }
+
+    .filtros .botao {
+        width: 100%
+    }
+
+    .editor {
+        width: 100% !important
+    }
+
+    .barra-linha {
+        grid-template-columns: 90px 1fr 28px !important
+    }
+
+    .sidebar-footer {
+        padding-top: 25px
+    }
+}
+
+@media print {
+
+    .sidebar,
+    .cabecalho .perfil,
+    .acoes,
+    .filtros,
+    .menu-toggle,
+    .toast {
+        display: none !important
+    }
+
+    .app {
+        margin: 0
+    }
+
+    .app main {
+        padding: 15px
+    }
+
+    .card {
+        break-inside: avoid
+    }
+
+    body {
+        background: white
+    }
+
+    .tabela-container {
+        overflow: visible
+    }
+}
+
+
+@media(max-width:700px) {
+    .sidebar {
+        position: static;
+        transform: none;
+        width: 100%;
+        box-shadow: none;
+        padding: 18px 16px;
+        overflow: visible
+    }
+
+    .marca {
+        padding: 0 8px 16px
+    }
+
+    .marca strong {
+        font-size: 20px
+    }
+
+    .sidebar nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px
+    }
+
+    .nav-link {
+        width: auto;
+        margin: 0;
+        padding: 10px 12px;
+        font-size: 13px
+    }
+
+    .sidebar-footer {
+        margin: 12px 0 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px
+    }
+
+    .sidebar-footer small {
+        padding: 8px 12px
+    }
+
+    .subnav {
+        padding: 10px
+    }
+
+    .app {
+        margin-left: 0
+    }
+}

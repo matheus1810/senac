@@ -1,0 +1,86 @@
+.pagina-login {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px
+}
+
+.login {
+    width: 500px;
+    max-width: 100%;
+    min-height: 600px;
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 15px;
+    padding: 52px 40px;
+    display: flex;
+    flex-direction: column
+}
+
+.login header {
+    text-align: center
+}
+
+.login h1 {
+    text-transform: uppercase;
+    font-size: 28px;
+    margin-bottom: 14px;
+    white-space: nowrap
+}
+
+.login header p {
+    font-size: 15px;
+    color: var(--muted)
+}
+
+.login form {
+    width: 330px;
+    max-width: 100%;
+    margin: 43px auto 0
+}
+
+.login .campo {
+    margin-bottom: 30px
+}
+
+.login form>.botao {
+    width: 100%;
+    margin-top: -4px
+}
+
+.recuperar {
+    display: block;
+    margin: 24px auto;
+    color: var(--primaria)
+}
+
+.login footer {
+    margin-top: auto;
+    padding-top: 48px;
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.8;
+    color: var(--muted)
+}
+
+@media(max-width:540px) {
+    .pagina-login {
+        padding: 16px
+    }
+
+    .login {
+        padding: 40px 24px;
+        min-height: 560px
+    }
+
+    .login h1 {
+        font-size: 24px;
+        white-space: normal
+    }
+
+    .login input {
+        font-size: 16px
+    }
+}

@@ -1,0 +1,118 @@
+:root {
+    --fundo: #f6f7f9;
+    --superficie: #fff;
+    --texto: #292d33;
+    --muted: #70757d;
+    --borda: #d9dce0;
+    --primaria: #405b7f;
+    --sidebar: #282d35;
+    --ativo: #434b57;
+    --raio: 10px;
+    --menu: 250px
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: var(--texto);
+    background: var(--fundo)
+}
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0
+}
+
+h1 {
+    font-size: 23px;
+    letter-spacing: .2px;
+    margin-bottom: 3px
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 22px
+}
+
+h3 {
+    font-size: 15px;
+    margin: 26px 0 18px
+}
+
+p {
+    line-height: 1.6
+}
+
+a {
+    color: inherit
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit
+}
+
+button,
+a,
+input,
+select,
+textarea {
+    -webkit-tap-highlight-color: transparent
+}
+
+button {
+    cursor: pointer
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid #8eaaca;
+    outline-offset: 3px
+}
+
+[hidden] {
+    display: none !important
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px
+}
+
+.destaque {
+    color: var(--primaria)
+}
+
+.numero {
+    font-size: 23px
+}
+
+.full {
+    grid-column: 1/-1
+}
+
+.espaco {
+    margin-top: 40px !important
+}
+
+.pular {
+    position: fixed;
+    top: -80px;
+    left: 15px;
+    z-index: 20;
+    background: white;
+    padding: 12px
+}
+
+.pular:focus {
+    top: 10px
+}

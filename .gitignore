@@ -7,5 +7,5 @@ __pycache__/
 venv/
 AGENTS.md
 HISTORICO_CHAT.md
-
+tests
 historico/
